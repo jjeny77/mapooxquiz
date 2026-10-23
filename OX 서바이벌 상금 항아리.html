@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OX SURVIVAL — 상금 집계 무대</title>
+<style>
+:root {
+  --site-primary: #ff3158;
+  --site-secondary: #183b32;
+  --site-background: #090a0f;
+  --site-on-primary: #ffffff;
+  --site-on-secondary: #f5f7fa;
+  --site-on-background: #f5f7fa;
+  --site-font-body: Inter, Pretendard, "Malgun Gothic", system-ui, sans-serif;
+  --site-font-heading: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #080b10; color: #f5f7fa; font-family: var(--site-font-body); }
+#app { min-height: 100vh; width: 100%; background-color: var(--site-background); color: var(--site-on-background); overflow: hidden; position: relative; }
+.stage { min-height: 100vh; position: relative; isolation: isolate; background: radial-gradient(ellipse at 50% 27%, #243d35 0%, #101a19 35%, #090a0f 75%); padding: 18px clamp(14px, 3vw, 42px) 26px; display: flex; flex-direction: column; }
+.stage:before { content:""; position:absolute; inset:0; z-index:-2; opacity:var(--site-decoration-opacity); background: repeating-linear-gradient(90deg, transparent 0 8.1%, rgba(255,255,255,.025) 8.15% 8.25%), linear-gradient(180deg, transparent 0 64%, rgba(255,49,88,.09) 100%); }
+.topline { display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid #ffffff22; padding-bottom:12px; text-transform:uppercase; letter-spacing:.2em; font-size:11px; color:#c5cbd3; }
+.brand { display:flex; align-items:center; gap:9px; font-weight:900; color:white; letter-spacing:.16em; }
+.symbols { display:flex; gap:5px; }
+.symbol { width:13px; height:13px; border:2px solid var(--site-primary); display:inline-block; }
+.symbol.circle { border-radius:50%; }
+.symbol.triangle { clip-path:polygon(50% 0, 0 100%, 100% 100%); background:var(--site-primary); border:0; }
+.symbol.square { background:var(--site-primary); }
+.live { display:flex; align-items:center; gap:8px; color:#ff6c75; font-weight:800; }
+.dot { width:7px; height:7px; background:#ff3443; border-radius:50%; box-shadow:0 0 14px #ff3443; animation:pulse 1.5s infinite; }
+.hero { text-align:center; padding:clamp(12px,2.5vh,28px) 0 0; }
+.eyebrow { color:#ff4553; font-size:clamp(10px,1.2vw,13px); font-weight:900; letter-spacing:.42em; }
+h1 { margin:6px 0 0; font-family:var(--site-font-heading); font-size:clamp(34px,6vw,72px); line-height:.98; letter-spacing:.035em; text-shadow:0 5px 25px #000; }
+.school-title { color:#fff; font-size:clamp(19px,2.8vw,32px); font-weight:950; letter-spacing:.08em; text-shadow:0 0 22px #ff315855; }
+.subtitle { color:#aeb6c0; font-size:clamp(11px,1.4vw,15px); letter-spacing:.18em; margin-top:9px; }
+.main { flex:1; display:grid; grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr); align-items:center; gap:clamp(16px,4vw,64px); width:min(1240px,100%); margin:0 auto; padding:18px 0 8px; }
+.jar-scene { min-height:410px; position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+.ceiling { position:absolute; top:5%; left:8%; right:8%; height:3px; background:linear-gradient(90deg,transparent,#89929c,transparent); box-shadow:0 0 20px #ffffff18; }
+.cable { position:absolute; top:5%; height:15%; width:2px; background:linear-gradient(#89929c,#d7dce0); }
+.cable.left { left:36%; } .cable.right { right:36%; }
+.jar-title { position:absolute; top:17%; font-size:11px; letter-spacing:.28em; color:#d6dce3; font-weight:800; }
+.jar { position:relative; margin-top:52px; width:clamp(220px,31vw,350px); height:clamp(240px,34vw,360px); border:4px solid #d5e8f2bb; border-top:10px solid #e2f1f7e8; border-radius:24px 24px 64px 64px; overflow:hidden; background:linear-gradient(105deg,rgba(207,237,248,.27),rgba(255,255,255,.055) 28%,rgba(167,218,237,.18) 66%,rgba(255,255,255,.09)); box-shadow:inset 10px 0 22px #ffffff24,inset -12px 0 20px #a4e6ff1a,0 20px 60px #0009,0 0 32px #a5d9ed20; }
+.jar:before { content:""; position:absolute; left:12%; top:0; width:9%; height:86%; background:linear-gradient(90deg,transparent,#ffffff44,transparent); border-radius:100%; }
+.jar:after { content:""; position:absolute; left:5%; right:5%; bottom:8px; height:18px; border-radius:50%; border-bottom:2px solid #d8f1ff66; }
+.jar-neck { position:absolute; top:-4px; width:48%; height:24px; border:3px solid #d5e8f2aa; border-top:0; border-radius:0 0 12px 12px; background:#b5e8fa17; z-index:2; }
+.money-pile { position:absolute; bottom:8%; left:7%; right:7%; height:0%; display:flex; flex-wrap:wrap-reverse; align-content:flex-start; justify-content:center; gap:3px; overflow:hidden; transition:height .7s ease; }
+.bill { position:relative; width:64px; height:31px; flex:0 0 64px; border:1px solid #b7a66b; border-radius:3px; background:repeating-linear-gradient(0deg,#b4d9a0 0 2px,#d7e8bd 2px 4px),linear-gradient(135deg,#e4e6b9,#77ad78); color:#214e36; display:flex; justify-content:center; align-items:center; font-size:11px; font-weight:1000; text-shadow:0 1px #f5f4cf; box-shadow:inset 0 0 0 3px #f2efc977,inset 0 0 0 5px #447c5066,0 3px 5px #0008; transform:rotate(var(--rot,0deg)); }
+.bill:before { content:"100"; position:absolute; left:4px; top:2px; font-size:7px; opacity:.9; }
+.bill:after { content:"100"; border:1px solid #387c4d; border-radius:50%; width:21px; height:21px; display:grid; place-items:center; font-size:8px; }
+.jar-glow { position:absolute; bottom:4%; width:65%; height:18px; background:#7ac4e9; opacity:.12; filter:blur(22px); }
+.floor-line { position:absolute; bottom:4%; width:100%; height:1px; background:linear-gradient(90deg,transparent,#ef334055,transparent); }
+.falling-layer { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.falling-bill { position:absolute; top:-50px; width:62px; height:30px; border:1px solid #b7a66b; border-radius:3px; background:repeating-linear-gradient(0deg,#b4d9a0 0 2px,#d7e8bd 2px 4px); color:#174b2c; font-size:11px; font-weight:1000; display:grid; place-items:center; animation:fall 2.4s cubic-bezier(.25,.65,.45,1) forwards; box-shadow:inset 0 0 0 3px #f2efc977,0 5px 12px #0008; }
+.falling-bill:after { content:"100"; position:absolute; right:3px; border:1px solid #28673e; border-radius:50%; width:17px; height:17px; display:grid; place-items:center; font-size:7px; }
+.panel { background:linear-gradient(145deg,#202832ee,#10151dee); border:1px solid #ffffff22; box-shadow:0 18px 60px #0006; padding:clamp(18px,2.6vw,32px); position:relative; }
+.panel:before { content:""; position:absolute; top:-1px; left:20px; width:70px; height:3px; background:var(--site-primary); box-shadow:0 0 18px #ef334477; }
+.panel-label { font-size:11px; letter-spacing:.25em; color:#a8b1bd; font-weight:800; }
+.amount { font-size:clamp(30px,4.2vw,52px); font-weight:950; letter-spacing:-.045em; margin:8px 0 2px; font-variant-numeric:tabular-nums; line-height:1.1; }
+.amount small { font-size:17px; color:#ff6873; letter-spacing:0; }
+.rule { height:1px; background:#ffffff1c; margin:18px 0; }
+.field-label { display:block; color:#e0e5ea; font-size:13px; font-weight:800; margin:0 0 8px; }
+.input-row { display:flex; gap:8px; }
+input { width:100%; min-width:0; background:#090d12; border:1px solid #4a5664; color:#fff; border-radius:5px; padding:13px 12px; font:700 18px var(--site-font-body); outline:none; }
+input:focus { border-color:#ff4553; box-shadow:0 0 0 3px #ef334426; }
+.unit { display:flex; align-items:center; padding:0 12px; background:#303a45; border:1px solid #4a5664; border-radius:5px; color:#cbd2db; font-weight:800; }
+.rate-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:14px; color:#aeb7c1; font-size:12px; }
+.rate-row input { max-width:145px; padding:8px 10px; text-align:right; font-size:14px; }
+.btn { width:100%; margin-top:18px; border:0; border-radius:4px; padding:15px 16px; background:var(--site-primary); color:white; font:900 14px var(--site-font-body); letter-spacing:.15em; cursor:pointer; box-shadow:0 5px 0 #8c1720,0 12px 24px #ef334422; transition:transform .15s,filter .15s; }
+.btn:hover { filter:brightness(1.12); } .btn:active { transform:translateY(3px); box-shadow:0 2px 0 #8c1720; }
+.btn.secondary { background:#303a45; box-shadow:none; border:1px solid #52606e; margin-top:9px; padding:10px; font-size:11px; }
+.status { min-height:18px; margin-top:12px; color:#ff9ca3; font-size:12px; text-align:center; }
+.stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:17px; }
+.stat { padding:12px; background:#0b1016a8; border:1px solid #ffffff14; }
+.stat span { display:block; color:#8f9aa7; font-size:10px; letter-spacing:.12em; margin-bottom:5px; }
+.stat strong { font-size:19px; font-variant-numeric:tabular-nums; }
+.bottom { display:flex; justify-content:space-between; gap:12px; border-top:1px solid #ffffff20; padding-top:12px; color:#6f7b88; font-size:10px; letter-spacing:.1em; }
+.bottom strong { color:#b8c1ca; }
+@keyframes fall { 0% { transform:translateY(-30px) rotate(-18deg); opacity:0; } 10% { opacity:1; } 85% { opacity:1; } 100% { transform:translateY(480px) rotate(350deg); opacity:0; } }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+@media(max-width:760px) { .stage { padding:14px; } .topline { letter-spacing:.1em; } .main { grid-template-columns:1fr; gap:10px; padding-top:4px; } .hero { padding-top:18px; } .jar-scene { min-height:310px; } .jar { width:220px; height:235px; margin-top:44px; } .cable { height:13%; } .jar-title { top:14%; } .panel { max-width:540px; width:100%; margin:0 auto; padding:20px; } .bottom { margin-top:18px; } }
+@media(prefers-reduced-motion:reduce) { *,*:before,*:after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <main class="stage">
+    <div class="topline">
+      <div class="brand"><div class="symbols"><i class="symbol circle"></i><i class="symbol triangle"></i><i class="symbol square"></i></div> OX SURVIVAL</div>
+      <div class="live"><i class="dot"></i> LIVE PLAYER COUNT</div>
+    </div>
+    <header class="hero">
+      <div class="school-title">마포중학교 서바이벌 OX퀴즈</div>
+      <div class="eyebrow">ROUND BY ROUND · PRIZE VAULT</div>
+      <h1>THE LAST ANSWER</h1>
+      <div class="subtitle">정답은 생존, 오답은 상금으로 — 오늘의 OX 서바이벌</div>
+    </header>
+    <section class="main">
+      <div class="jar-scene" aria-label="돈다발이 쌓이는 유리 항아리">
+        <div class="ceiling"></div><div class="cable left"></div><div class="cable right"></div>
+        <div class="jar-title">ELIMINATION VAULT / 001</div>
+        <div class="jar"><div class="jar-neck"></div><div class="money-pile" id="moneyPile"></div></div>
+        <div class="jar-glow"></div><div class="floor-line"></div><div class="falling-layer" id="fallingLayer"></div>
+      </div>
+      <section class="panel">
+        <div class="panel-label">ACCUMULATED PRIZE MONEY</div>
+        <div class="amount" id="totalAmount">₩ 0 <small>KRW</small></div>
+        <div class="rule"></div>
+        <label class="field-label" for="eliminated">이번 라운드 탈락자 수 입력</label>
+        <div class="input-row"><input id="eliminated" type="number" min="0" max="380" step="1" value="0" inputmode="numeric" aria-describedby="status"><div class="unit">명</div></div>
+        <div class="rate-row"><label for="rate">1명당 환산 금액</label><div class="input-row" style="max-width:170px"><input id="rate" type="number" min="0" step="1000" value="10000" inputmode="numeric"><div class="unit">원</div></div></div>
+        <button class="btn" id="dropBtn">▾　상금 투입 / DROP CASH</button>
+        <button class="btn secondary" id="resetBtn">라운드 기록 초기화</button>
+        <div class="status" id="status" role="status" aria-live="polite">탈락자 수를 입력한 뒤 상금 투입 버튼을 누르세요.</div>
+        <div class="stats"><div class="stat"><span>이번 라운드 탈락자</span><strong id="roundCount">0명</strong></div><div class="stat"><span>누적 탈락자</span><strong id="allCount">0명</strong></div></div>
+      </section>
+    </section>
+    <footer class="bottom"><span><strong>마포중학교 학생회</strong></span><span>총 참가자 <strong>380명</strong>　·　학교 축제용</span></footer>
+  </main>
+</div>
+<script>
+(() => {
+  const totalPlayers = 380;
+  const countInput = document.getElementById('eliminated');
+  const rateInput = document.getElementById('rate');
+  const totalAmount = document.getElementById('totalAmount');
+  const roundCount = document.getElementById('roundCount');
+  const allCount = document.getElementById('allCount');
+  const status = document.getElementById('status');
+  const pile = document.getElementById('moneyPile');
+  const fallingLayer = document.getElementById('fallingLayer');
+  let eliminatedTotal = 0;
+  let prizeTotal = 0;
+  let round = 0;
+  const won = n => '₩ ' + Math.max(0, n).toLocaleString('ko-KR');
+  function refreshPreview() {
+    const n = Math.max(0, Math.min(totalPlayers, Math.floor(Number(countInput.value) || 0)));
+    const rate = Math.max(0, Math.floor(Number(rateInput.value) || 0));
+    roundCount.textContent = n.toLocaleString('ko-KR') + '명';
+    totalAmount.innerHTML = won(prizeTotal) + ' <small>KRW</small>';
+    countInput.setAttribute('max', String(Math.max(0, totalPlayers - eliminatedTotal)));
+    if (n > totalPlayers - eliminatedTotal) status.textContent = `남은 참가자는 ${totalPlayers - eliminatedTotal}명입니다. 입력값을 확인하세요.`;
+    else status.textContent = n ? `이번 투입 예정 금액: ${won(n * rate)}` : '탈락자 수를 입력한 뒤 상금 투입 버튼을 누르세요.';
+  }
+  function animateBills(count) {
+    const visualCount = Math.min(28, Math.max(5, Math.ceil(count / 2)));
+    for (let i = 0; i < visualCount; i++) {
+      const bill = document.createElement('div');
+      bill.className = 'falling-bill';
+      bill.textContent = '100';
+      bill.style.left = (10 + Math.random() * 78) + '%';
+      bill.style.animationDelay = (Math.random() * 0.75) + 's';
+      bill.style.transform = `rotate(${Math.random() * 70 - 35}deg)`;
+      fallingLayer.appendChild(bill);
+      bill.addEventListener('animationend', () => bill.remove(), {once:true});
+    }
+    const visibleBills = Math.min(42, Math.ceil(prizeTotal / Math.max(1, Number(rateInput.value) || 10000) * 0.7));
+    pile.innerHTML = '';
+    for (let i = 0; i < visibleBills; i++) {
+      const bill = document.createElement('div');
+      bill.className = 'bill';
+      bill.style.setProperty('--rot', (Math.random() * 16 - 8) + 'deg');
+      bill.textContent = '100';
+      pile.appendChild(bill);
+    }
+    pile.style.height = Math.min(72, visibleBills * 2.2) + '%';
+  }
+  document.getElementById('dropBtn').addEventListener('click', () => {
+    const n = Math.floor(Number(countInput.value));
+    const rate = Math.floor(Number(rateInput.value));
+    if (!Number.isFinite(n) || n < 0 || !Number.isFinite(rate) || rate < 0) { status.textContent = '0 이상의 숫자를 입력하세요.'; return; }
+    if (n > totalPlayers - eliminatedTotal) { status.textContent = `입력 오류: 현재 남은 참가자는 ${totalPlayers - eliminatedTotal}명입니다.`; return; }
+    if (n === 0) { status.textContent = '이번 라운드 탈락자가 0명입니다. 숫자를 확인하세요.'; return; }
+    round++;
+    eliminatedTotal += n;
+    prizeTotal += n * rate;
+    animateBills(n);
+    allCount.textContent = eliminatedTotal.toLocaleString('ko-KR') + '명';
+    totalAmount.innerHTML = won(prizeTotal) + ' <small>KRW</small>';
+    status.textContent = `${round}라운드 완료! ${n}명 × ${won(rate)} = ${won(n * rate)} 투입 완료`;
+    countInput.value = 0;
+    refreshPreview();
+    status.textContent = `${round}라운드 완료! ${n}명 × ${won(rate)} = ${won(n * rate)} 투입 완료`;
+  });
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    eliminatedTotal = 0; prizeTotal = 0; round = 0;
+    countInput.value = 0; pile.innerHTML = ''; fallingLayer.innerHTML = ''; pile.style.height = '0%';
+    allCount.textContent = '0명';
+    refreshPreview();
+    status.textContent = '기록이 초기화되었습니다. 다음 라운드를 시작하세요.';
+  });
+  countInput.addEventListener('input', refreshPreview);
+  rateInput.addEventListener('input', refreshPreview);
+  refreshPreview();
+})();
+</script>
+</body>
+</html>
