@@ -111,7 +111,7 @@ input:focus { border-color:#ff4553; box-shadow:0 0 0 3px #ef334426; }
         <div class="amount" id="totalAmount">₩ 0 <small>KRW</small></div>
         <div class="rule"></div>
         <label class="field-label" for="eliminated">이번 라운드 탈락자 수 입력</label>
-        <div class="input-row"><input id="eliminated" type="number" min="0" max="380" step="1" value="0" inputmode="numeric" aria-describedby="status"><div class="unit">명</div></div>
+        <div class="input-row"><input id="eliminated" type="number" min="0" max="500" step="1" value="0" inputmode="numeric" aria-describedby="status"><div class="unit">명</div></div>
         <div class="rate-row"><label for="rate">1명당 환산 금액</label><div class="input-row" style="max-width:170px"><input id="rate" type="number" min="0" step="1000" value="10000" inputmode="numeric"><div class="unit">원</div></div></div>
         <button class="btn" id="dropBtn">▾　상금 투입 / DROP CASH</button>
         <button class="btn secondary" id="resetBtn">라운드 기록 초기화</button>
@@ -119,12 +119,12 @@ input:focus { border-color:#ff4553; box-shadow:0 0 0 3px #ef334426; }
         <div class="stats"><div class="stat"><span>이번 라운드 탈락자</span><strong id="roundCount">0명</strong></div><div class="stat"><span>누적 탈락자</span><strong id="allCount">0명</strong></div></div>
       </section>
     </section>
-    <footer class="bottom"><span><strong>마포중학교 학생회</strong></span><span>총 참가자 <strong>380명</strong>　·　학교 축제용</span></footer>
+    <footer class="bottom"><span><strong>마포중학교 학생회</strong></span><span>총 참가자 <strong>500명</strong>　·　학교 축제용</span></footer>
   </main>
 </div>
 <script>
 (() => {
-  const totalPlayers = 380;
+  const totalPlayers = 500;
   const countInput = document.getElementById('eliminated');
   const rateInput = document.getElementById('rate');
   const totalAmount = document.getElementById('totalAmount');
